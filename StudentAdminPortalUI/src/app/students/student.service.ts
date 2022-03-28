@@ -39,4 +39,12 @@ export class StudentService {
 
     return this.httpClient.put<Student>(this.baseUrl+'/Student/'+ studentId,updateStudentRequest);
   }
+
+  DeleteStudent(studentId:string):Observable<Student>
+  {
+   return this.httpClient.delete<Student>(this.baseUrl+'/Student/'+ studentId);
+  }
+ 
+
+ 
 }
