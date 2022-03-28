@@ -46,6 +46,11 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header> gender </th>
             <td mat-cell *matCellDef="let element"> {{element.gender}} </td>
           </ng-container>
+
+          <ng-container matColumnDef="edit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+            <td mat-cell *matCellDef="let element"><a href="['/students', element.id]"><mat-Icon color="primary">edit</mat-Icon></a> </td>
+          </ng-container>
       
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
