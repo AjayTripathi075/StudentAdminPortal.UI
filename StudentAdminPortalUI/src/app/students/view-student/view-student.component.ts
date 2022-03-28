@@ -14,6 +14,7 @@ import { StudentService } from '../student.service';
 export class ViewStudentComponent implements OnInit {
  studentId:string | null|undefined;
  genderList:Gender[]=[];
+ displayProfileImageUrl='';
  student:Student={
    id:'',
    firstName:'',
@@ -47,11 +48,15 @@ export class ViewStudentComponent implements OnInit {
       {
         this.isNewStudent=true;
         this.header='Add New Student'
+        this.setImage();
       }else{
         this.isNewStudent=false;
         this.header='Edit New Student';
         this.studentService.getStudent(this.studentId).subscribe((successResponse)=>{
-          this.student = successResponse
+          this.student = successResponse;
+          this.setImage();
+        },(errprResponse)=>{
+          this.setImage();
         });
       }
       this.genderService.getGenderList().subscribe((successResponse)=>{
@@ -111,5 +116,32 @@ export class ViewStudentComponent implements OnInit {
         duration:2000
       });
     })
+  }
+  uploadImage(event:any)
+  {
+     if(this.studentId)
+     {
+       const file:File = event.target.files[0];
+       this.studentService.uploadImage(this.student.id,file)
+       .subscribe((successResponse)=>{
+         this.student.profileImageUrl = successResponse;
+         this.setImage();
+         this.snackbar.open('profile image uploaded',undefined,{
+          duration:2000
+        });
+       },(errorResponse)=>{
+
+       });
+     }
+  }
+  private setImage()
+  {
+     if(this.student.profileImageUrl)
+     {
+      this.displayProfileImageUrl = this.studentService.getImagePath(this.student.profileImageUrl);
+     }
+     else{
+       this.displayProfileImageUrl = '../../../assets/user.jpg';
+     }
   }
 }

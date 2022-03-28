@@ -60,5 +60,19 @@ AddStudent(studentRequest:Student):Observable<Student>
     };
     return this.httpClient.post<Student>(this.baseUrl+'/Student/Add',addStudentRequest);
 }
+
+uploadImage(studentId:string,file:File):Observable<any>
+{
+const formData = new FormData();
+formData.append("profileImage",file);
+ return this.httpClient.post(this.baseUrl+'/Student/'+ studentId +'/upload-image',formData,{
+  responseType:'text'
+});
+}
+
+getImagePath(relativePath:string)
+{
+ return `${this.baseUrl}/${relativePath}`;
+}
  
 }
