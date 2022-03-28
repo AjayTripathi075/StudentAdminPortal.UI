@@ -12,6 +12,6 @@ export class GenderService {
 
   getGenderList():Observable<Gender[]>
   {
-   return  this.httpClient.get<Gender[]>(this.baseUrl+'/api/Gender');
+   return  this.httpClient.get<Gender[]>(this.baseUrl+'/Gender');
   }
 }

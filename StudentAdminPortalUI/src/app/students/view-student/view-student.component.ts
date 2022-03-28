@@ -30,6 +30,9 @@ export class ViewStudentComponent implements OnInit {
     postalAddress:''
    }
  };
+ isNewStudent = true;
+ header='';
+
   constructor(private readonly studentService:StudentService,private readonly route:ActivatedRoute
     ,private genderService:GenderService,private snackbar : MatSnackBar,private router:Router) { }
 
@@ -39,9 +42,18 @@ export class ViewStudentComponent implements OnInit {
 
     if(this.studentId)
     {
-      this.studentService.getStudent(this.studentId).subscribe((successResponse)=>{
-        this.student = successResponse
-      }),
+      //if the route contains the 'Add'  -> new Student Functionality
+      if(this.studentId.toLowerCase()=='Add'.toLowerCase())
+      {
+        this.isNewStudent=true;
+        this.header='Add New Student'
+      }else{
+        this.isNewStudent=false;
+        this.header='Edit New Student';
+        this.studentService.getStudent(this.studentId).subscribe((successResponse)=>{
+          this.student = successResponse
+        });
+      }
       this.genderService.getGenderList().subscribe((successResponse)=>{
         this.genderList = successResponse;
       })
@@ -83,5 +95,21 @@ export class ViewStudentComponent implements OnInit {
     });
     }
     )
+  }
+  AddStudent()
+  {
+    this.studentService.AddStudent(this.student).subscribe((successResponse)=>{
+      this.snackbar.open('student Add sucessfully',undefined,{
+        duration:2000
+      });
+      setTimeout(()=>{
+        this.router.navigateByUrl('students');
+      },2000);
+          
+    }, (errorResponse)=>{
+      this.snackbar.open('student Add Unsucessfully',undefined,{
+        duration:2000
+      });
+    })
   }
 }
