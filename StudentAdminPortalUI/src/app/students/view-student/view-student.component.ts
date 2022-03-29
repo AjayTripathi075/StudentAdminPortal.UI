@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Gender } from 'src/app/models/view-models/gender.model';
@@ -14,7 +15,6 @@ import { StudentService } from '../student.service';
 export class ViewStudentComponent implements OnInit {
  studentId:string | null|undefined;
  genderList:Gender[]=[];
- displayProfileImageUrl='';
  student:Student={
    id:'',
    firstName:'',
@@ -33,6 +33,8 @@ export class ViewStudentComponent implements OnInit {
  };
  isNewStudent = true;
  header='';
+ displayProfileImageUrl='';
+ @ViewChild('studentDetailsForm') studentDetailsForm?:NgForm;
 
   constructor(private readonly studentService:StudentService,private readonly route:ActivatedRoute
     ,private genderService:GenderService,private snackbar : MatSnackBar,private router:Router) { }
@@ -67,6 +69,8 @@ export class ViewStudentComponent implements OnInit {
   }
   onUpdate()
   {
+    if(this.studentDetailsForm?.form.valid)
+    {
     this.studentService.updateStudent(this.student.id,this.student)
     .subscribe((successResponse)=>{
          // show notification 
@@ -78,8 +82,8 @@ export class ViewStudentComponent implements OnInit {
       this.snackbar.open('student update Unsucessfully',undefined,{
         duration:2000
       });
-    }
-    )
+    });
+  }
   }
 
   onDelete()
@@ -103,19 +107,23 @@ export class ViewStudentComponent implements OnInit {
   }
   AddStudent()
   {
-    this.studentService.AddStudent(this.student).subscribe((successResponse)=>{
-      this.snackbar.open('student Add sucessfully',undefined,{
-        duration:2000
-      });
-      setTimeout(()=>{
-        this.router.navigateByUrl('students');
-      },2000);
-          
-    }, (errorResponse)=>{
-      this.snackbar.open('student Add Unsucessfully',undefined,{
-        duration:2000
-      });
-    })
+    if(this.studentDetailsForm?.form.valid)
+    {
+      this.studentService.AddStudent(this.student).subscribe((successResponse)=>{
+        this.snackbar.open('student Add sucessfully',undefined,{
+          duration:2000
+        });
+        setTimeout(()=>{
+          this.router.navigateByUrl('students');
+        },2000);
+            
+      }, (errorResponse)=>{
+        this.snackbar.open('student Add Unsucessfully',undefined,{
+          duration:2000
+        });
+      });    
+    }
+
   }
   uploadImage(event:any)
   {
@@ -134,14 +142,14 @@ export class ViewStudentComponent implements OnInit {
        });
      }
   }
-  private setImage()
+  private setImage():void
   {
      if(this.student.profileImageUrl)
      {
       this.displayProfileImageUrl = this.studentService.getImagePath(this.student.profileImageUrl);
      }
      else{
-       this.displayProfileImageUrl = '../../../assets/user.jpg';
+       this.displayProfileImageUrl = '/assets/user.jpg';
      }
   }
 }
